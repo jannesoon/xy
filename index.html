@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>星月小手机</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="stylesheet" href="style.css">
+  <!-- 你的图标和manifest配置保持不变 -->
+</head>
+<body>
+  <!-- ===== 锁屏层（默认显示） ===== -->
+  <div id="lock-screen" style="
+    z-index:9999;position:fixed;top:0;left:0;width:100vw;height:100vh;
+    background: url('https://i.imgur.com/1n3a43H.jpeg') center/cover no-repeat;
+    display:flex;flex-direction:column;justify-content:space-between;align-items:center;
+    padding:80px 20px 50px 20px;box-sizing:border-box;
+  ">
+    <div id="lock-clock-container" style="text-align:center;">
+      <div id="lock-main-time" style="font-size:80px;font-weight:200;color:white;text-shadow:0 3px 8px rgba(0,0,0,0.4);">00:00</div>
+      <div id="lock-main-date" style="font-size:18px;font-weight:500;color:white;text-shadow:0 3px 8px rgba(0,0,0,0.4);">1月1日 星期一</div>
+    </div>
+    <div id="unlock-hint" style="font-size:16px;color:white;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,0.3);margin-top:60px;">
+      上划 / 点击屏幕解锁
+    </div>
+  </div>
+  <!-- ======= 主体手机界面（原内容全部不变，直接搬过来） ======= -->
+  <div id="phone-screen" style="display:none;">
+    <!-- 你原来的全部内容都放这里（我已省略） -->
+    <!-- ...你的现有代码... -->
+  </div>
+  <!-- ======= 锁屏&主页面切换脚本 ======= -->
+  <script>
+    // 动态更新时间和日期
+    function updateLockTime() {
+      const now = new Date();
+      let h = now.getHours(), m = now.getMinutes();
+      if(h<10) h="0"+h; if(m<10) m="0"+m;
+      document.getElementById("lock-main-time").innerText = `${h}:${m}`;
+      const weekday = "日一二三四五六".charAt(now.getDay());
+      document.getElementById("lock-main-date").innerText = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${weekday}`;
+    }
+    setInterval(updateLockTime, 1000); updateLockTime();
+
+    // 解锁事件
+    let lockScreen = document.getElementById("lock-screen");
+    lockScreen.addEventListener("click", unlock);
+    lockScreen.addEventListener("touchstart", handleTouchStart, false);
+    let y0=null;
+    function handleTouchStart(e){
+      y0=e.touches[0].clientY;
+      lockScreen.addEventListener("touchmove", handleTouchMove, false);
+    }
+    function handleTouchMove(e){
+      let y1=e.touches[0].clientY;
+      if(y0!==null && y0-y1>50){
+        unlock();
+        y0=null;
+        lockScreen.removeEventListener("touchmove",handleTouchMove);
+      }
+    }
+    function unlock(){
+      lockScreen.style.display = "none";
+      document.getElementById("phone-screen").style.display = "";
+      document.body.style.overflow="";
+    }
+    // 初始只显示锁屏
+    document.getElementById("phone-screen").style.display = "none";
+    document.body.style.overflow = "hidden";
+  </script>
+</body>
+</html>
