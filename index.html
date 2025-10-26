@@ -5,23 +5,89 @@
   <title>星月小手机</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="stylesheet" href="style.css">
-  <!-- 你的图标和manifest配置保持不变 -->
+  <style>
+    /* ===== 锁屏CSS ===== */
+    #lock-screen {
+      z-index: 9999;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: url('https://i.imgur.com/1n3a43H.jpeg') center/cover no-repeat;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 80px 20px 50px 20px;
+      box-sizing: border-box;
+      transition: transform 0.3s ease-out;
+    }
+    #lock-clock-container {
+      text-align: center;
+      text-shadow: 0 3px 8px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
+    #lock-main-time {
+      font-size: 80px;
+      font-weight: 200;
+    }
+    #lock-main-date {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    #unlock-hint {
+      font-size: 16px;
+      font-weight: 500;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      animation: hint-pulse 2s infinite ease-in-out;
+      margin-top: 60px;
+    }
+    @keyframes hint-pulse {
+      0%, 100% { opacity: 0.7; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-5px); }
+    }
+    /* 可加入更多锁屏自定义样式 */
+  </style>
 </head>
 <body>
-  <!-- ===== 锁屏层（默认显示） ===== -->
-  <div id="lock-screen" style="
-    z-index:9999;position:fixed;top:0;left:0;width:100vw;height:100vh;
-    background: url('https://i.imgur.com/1n3a43H.jpeg') center/cover no-repeat;
-    display:flex;flex-direction:column;justify-content:space-between;align-items:center;
-    padding:80px 20px 50px 20px;box-sizing:border-box;
-  ">
-    <div id="lock-clock-container" style="text-align:center;">
-      <div id="lock-main-time" style="font-size:80px;font-weight:200;color:white;text-shadow:0 3px 8px rgba(0,0,0,0.4);">00:00</div>
-      <div id="lock-main-date" style="font-size:18px;font-weight:500;color:white;text-shadow:0 3px 8px rgba(0,0,0,0.4);">1月1日 星期一</div>
+  <!-- ====== 锁屏层（默认显示，解锁后消失） ====== -->
+  <div id="lock-screen">
+    <div id="lock-clock-container">
+      <div id="lock-main-time">00:00</div>
+      <div id="lock-main-date">1月1日 星期一</div>
     </div>
-    <div id="unlock-hint" style="font-size:16px;color:white;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,0.3);margin-top:60px;">
-      上划 / 点击屏幕解锁
-    </div>
+    <div id="unlock-hint">上划 / 点击屏幕解锁</div>
+  </div>
+  <!-- ====== 主页面内容区（默认隐藏，解锁后显示） ====== -->
+  <div id="phone-screen" style="display:none;">
+    <!-- =========== 在此处插入你的主页面内容 =========== -->
+    <div class="container">
+      <div class="header">星月小手机</div>
+      <div class="chat-window">
+        <!-- 这里放你的聊天界面、底栏、设置等全部主内容 -->
+        <p style="text-align:center;margin-top:2em;color:#bbb;"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>EPhone（星月版）</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="https://s3plus.meituan.net/opapisdk/op_ticket_885190757_1758510900942_qdqqd_djw0z2.jpeg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EPhone">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" type="image/png" href="https://s3plus.meituan.net/opapisdk/op_ticket_885190757_1756312261242_qdqqd_g0eriz.jpeg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://unpkg.com/dexie/dist/dexie.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://phoebeboo.github.io/mewoooo/pp.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+  <script src="script.js" defer="defer"></script>
+</head>
 <body>
   <div id="phone-screen">
     <div id="status-bar"> <span id="status-bar-time">12:00</span>
@@ -2364,7 +2430,21 @@
     </script>
 
 </body>
-  <!-- ======= 锁屏&主页面切换脚本 ======= -->
+</html>
+
+
+
+
+
+
+
+
+</p>
+      </div>
+    </div>
+    <!-- ============================================== -->
+  </div>
+  <!-- ====== 脚本区（锁屏/解锁逻辑） ====== -->
   <script>
     // 动态更新时间和日期
     function updateLockTime() {
