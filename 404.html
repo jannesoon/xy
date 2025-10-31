@@ -1,0 +1,26 @@
+```html
+<!doctype html>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=./index.html">
+```
+
+---
+
+## _redirects（Netlify SPA 兼容）
+
+```
+/* /index.html 200
+```
+
+---
+
+### 使用说明（一次过）
+
+1. 把以上文件按结构创建/粘贴到你的仓库。
+2. GitHub Pages：Settings → Pages → Branch 选 `main`/root。
+3. Netlify：New site from Git → 选此仓库；**Build command 留空**，**Publish directory 填 `/`**。
+4. 进入 **外观设置** 页面，上传锁屏壁纸、设置密码、写/保存你的全局 CSS；开启锁屏开关后回首页可预览。
+5. 进入 **API 设置** 页面，填 baseURL（你的代理或本地 `/v1`）、模型名、温度；点“测试一次”验证连通。
+6. **世界书**：新增几条「逸辰/柒柒/星辰闪耀」的短触发词与内容；可用“导出/导入”做迁移备份。
+
+> 后续接入聊天只需在 `index.html` 里放入你的对话 UI，并调用 `App.testChatOnce()` 的写法作为模板改成流式/对话调用即可。

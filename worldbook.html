@@ -1,0 +1,95 @@
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>世界书 · 星月小手机</title>
+  <link rel="stylesheet" href="../assets/app.css" />
+  <style id="custom-css"></style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">世界书（最小）</div>
+    <nav class="nav">
+      <a href="../index.html">返回</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>条目</h2>
+      <div style="display:grid; gap:10px; grid-template-columns:1fr 1fr; align-items:start">
+        <label>触发词（如：逸辰 / 柒柒）<input id="wb-trigger" placeholder="触发词" /></label>
+        <button id="wb-add" class="btn">添加</button>
+      </div>
+      <label>内容
+        <textarea id="wb-content" style="width:100%; min-height:120px"></textarea>
+      </label>
+    </section>
+
+    <section class="hero" style="margin-top:16px">
+      <h3>当前条目</h3>
+      <ul id="wb-list" style="list-style:none; padding:0; margin:0; display:grid; gap:8px"></ul>
+      <div style="margin-top:12px; display:flex; gap:10px">
+        <button id="btn-export" class="btn ghost">导出数据</button>
+        <label class="btn ghost" style="cursor:pointer">导入数据<input id="file-import" type="file" hidden /></label>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    App.applyCustomCss();
+
+    const listEl = document.getElementById('wb-list');
+    function render(){
+      const arr = App.jget('worldbook', []);
+      listEl.innerHTML = '';
+      if(!arr.length){ listEl.innerHTML = '<li style="opacity:.7">暂无</li>'; return; }
+      for(const it of arr){
+        const li = document.createElement('li');
+        li.className = 'hero';
+        li.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
+            <strong>${it.trigger}</strong>
+            <div style="display:flex; gap:8px">
+              <button class="btn ghost" data-id="${it.id}" data-act="edit">编辑</button>
+              <button class="btn ghost" data-id="${it.id}" data-act="del">删除</button>
+            </div>
+          </div>
+          <pre style="white-space:pre-wrap; margin:8px 0 0">${it.content}</pre>
+        `;
+        listEl.appendChild(li);
+      }
+    }
+    function add(){
+      const trigger = document.getElementById('wb-trigger').value.trim();
+      const content = document.getElementById('wb-content').value.trim();
+      if(!trigger||!content) return alert('请填写触发词与内容');
+      const arr = App.jget('worldbook', []);
+      arr.push({ id:crypto.randomUUID(), trigger, content });
+      App.jset('worldbook', arr); document.getElementById('wb-content').value=''; render();
+    }
+
+    document.getElementById('wb-add').onclick = add;
+    listEl.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      const id = btn.dataset.id; const act = btn.dataset.act; const arr = App.jget('worldbook', []);
+      const idx = arr.findIndex(x=>x.id===id); if(idx<0) return;
+      if(act==='del'){ arr.splice(idx,1); App.jset('worldbook',arr); render(); }
+      if(act==='edit'){
+        const newer = prompt('修改内容', arr[idx].content);
+        if(newer!==null){ arr[idx].content = newer; App.jset('worldbook',arr); render(); }
+      }
+    });
+
+    // 导出/导入复用公用函数
+    XY.on('btn-export','click', ()=> App.exportAll());
+    XY.on('file-import','change', (e)=>{ const f=e.target.files?.[0]; if(f) App.importAll(f); });
+
+    render();
+  </script>
+</body>
+</html>
+```
