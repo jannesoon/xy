@@ -1,154 +1,126 @@
-<!DOCTYPE html>
+````html
+<!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>星月小手机 · 锁屏整合版</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <!-- 如果你有自己的全局样式，保留原来的 <link rel="stylesheet" href="style.css"> -->
-  <style>
-    /* =============== 基础重置 =============== */
-    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    html,body { height:100%; margin:0; }
-    body { font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC","Hiragino Sans GB","Microsoft YaHei", Arial, sans-serif; background:#0b1220; color:#eef2ff; }
-
-    /* =============== 锁屏样式 =============== */
-    #lock-screen{
-      position:fixed; inset:0; z-index:9999;
-      display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-      padding:80px 20px 50px; text-align:center;
-      background: url('https://i.imgur.com/1n3a43H.jpeg') center/cover no-repeat;
-      color:#fff; transition:transform .3s ease-out, opacity .25s ease-out;
-    }
-    #lock-clock-container{ text-shadow:0 3px 8px rgba(0,0,0,.4); }
-    #lock-main-time{ font-size:80px; font-weight:200; }
-    #lock-main-date{ font-size:18px; font-weight:500; }
-    #unlock-hint{
-      font-size:16px; font-weight:600; text-shadow:0 1px 4px rgba(0,0,0,.35); margin-top:60px;
-      animation:hint-pulse 2s infinite ease-in-out;
-    }
-    @keyframes hint-pulse{ 0%,100%{opacity:.7; transform:translateY(0)} 50%{opacity:1; transform:translateY(-5px)} }
-
-    /* 可选：锁屏消失的小动画 */
-    .lock-hide{ opacity:0; transform:translateY(-20px); pointer-events:none; }
-
-    /* =============== 主界面占位（解锁后显示） =============== */
-    #phone-screen{ min-height:100vh; display:none; }
-    .placeholder{
-      min-height:100vh; display:grid; place-items:center; padding:24px;
-      background:
-        radial-gradient(900px 600px at 70% -10%, rgba(106,164,255,.18), transparent 60%),
-        radial-gradient(700px 500px at -10% 110%, rgba(155,140,255,.15), transparent 60%),
-        #0b1220;
-    }
-    .card{
-      max-width:720px; width:100%;
-      background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(10px); border-radius:18px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35);
-    }
-    .card h1{ margin:0 0 8px; font-size:20px; }
-    .card p{ margin:6px 0 0; color:#b7c0d8; }
-    .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; margin-top:14px;
-      border-radius:14px; border:1px solid rgba(255,255,255,.18); cursor:pointer; background:transparent; color:#eef2ff;
-    }
-    .btn.primary{ background:linear-gradient(180deg,#6aa4ff,#4f86ff); color:#0b1220; font-weight:700; border-color:transparent; }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>星月小手机 · 首页</title>
+  <link rel="stylesheet" href="./assets/app.css" />
+  <style id="custom-css"></style>
 </head>
 <body>
-  <!-- ================== 锁屏层（默认显示） ================== -->
-  <div id="lock-screen" aria-label="锁屏">
-    <div id="lock-clock-container">
-      <div id="lock-main-time">00:00</div>
-      <div id="lock-main-date">1月1日 星期一</div>
-    </div>
-    <div id="unlock-hint">上划 / 点击屏幕解锁</div>
-  </div>
+  <!-- 顶栏导航 -->
+  <header class="topbar">
+    <div class="brand">星月小手机</div>
+    <nav class="nav">
+      <a href="./index.html">聊天</a>
+      <a href="./pages/settings-api.html">API</a>
+      <a href="./pages/settings-appearance.html">外观</a>
+      <a href="./pages/worldbook.html">世界书</a>
+    </nav>
+  </header>
 
-  <!-- ================== 主界面（解锁后显示） ================== -->
-  <div id="phone-screen">
-    <!-- 这里先放一个安全的占位；以后你有空再把“原来的主页面全部代码”粘到此处即可 -->
-    <div class="placeholder">
-      <div class="card">
-        <h1>星月小手机 · 主界面占位</h1>
-        <p>解锁成功啦～现在看到的是占位页。你的原主界面代码还没粘进来。</p>
-        <p>等你不累的时候，把你原来 <strong>index.html</strong> 里“主页面那一大段（聊天、底栏、设置、世界书等）”整体复制，替换本卡片即可。</p>
-        <button class="btn primary" onclick="alert('先用这版能正常解锁。下次把你的主界面整段粘到 #phone-screen 里，就完成啦～')">知道啦</button>
+  <!-- 主屏（聊天 UI） -->
+  <main class="container">
+    <section class="chat">
+      <div id="chat-list" class="chat-list"></div>
+      <form id="chat-form" class="chat-input" autocomplete="off">
+        <textarea id="chat-text" rows="1" placeholder="和逸辰说点什么…（Shift+Enter 换行）"></textarea>
+        <button id="chat-send" class="btn" type="submit">发送</button>
+        <button id="chat-stop" class="btn ghost" type="button" title="停止流式">停止</button>
+      </form>
+      <div class="chat-tools">
+        <button id="btn-lock" class="btn ghost">🔒 锁屏</button>
+        <button id="btn-clear" class="btn ghost">清空对话</button>
       </div>
+    </section>
+  </main>
+
+  <!-- 锁屏层（默认隐藏，由 app.js 控制） -->
+  <div id="lock-screen" class="lock hidden">
+    <div class="lock-clock">
+      <div id="lock-time" class="time">00:00</div>
+      <div id="lock-date" class="date">—</div>
     </div>
+    <div id="unlock-hint" class="hint">向上轻扫以解锁 / 点击输入密码</div>
+
+    <!-- 密码弹窗 -->
+    <dialog id="pwd-modal" class="pwd-modal">
+      <form method="dialog" class="pwd-card">
+        <p class="title">输入锁屏密码</p>
+        <input id="pwd-input" type="password" placeholder="••••" autocomplete="off" />
+        <div class="row">
+          <button value="cancel" class="btn ghost">取消</button>
+          <button id="pwd-confirm" value="default" class="btn primary">解锁</button>
+        </div>
+      </form>
+    </dialog>
   </div>
 
-  <!-- ================== 脚本（锁屏逻辑） ================== -->
+  <script src="./assets/app.js"></script>
   <script>
-    // （可选）设置密码：留空表示无需密码，点击/上划即可解锁
-    const LOCK_PWD = ""; // 例如 "7777"；若留空则不显示输入框
-
-    // 动态更新时间/日期
-    function updateLockTime(){
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2,'0');
-      const m = String(now.getMinutes()).padStart(2,'0');
-      const w = "日一二三四五六".charAt(now.getDay());
-      document.getElementById("lock-main-time").textContent = `${h}:${m}`;
-      document.getElementById("lock-main-date").textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${w}`;
-    }
-    setInterval(updateLockTime, 1000); updateLockTime();
-
-    // 解锁：隐藏锁屏，显示主界面
-    function doUnlock(){
-      const lock = document.getElementById('lock-screen');
-      lock.classList.add('lock-hide');
-      setTimeout(()=>{ lock.style.display='none'; }, 220);
-      document.getElementById('phone-screen').style.display = '';
-      document.body.style.overflow = '';
-    }
-
-    // 手势/点击解锁（无密码模式）
-    const lockScreen = document.getElementById('lock-screen');
-    let y0 = null;
-    lockScreen.addEventListener('click', ()=>{ if(!LOCK_PWD) doUnlock(); });
-    lockScreen.addEventListener('touchstart', e=>{
-      y0 = e.touches[0].clientY;
-    }, {passive:true});
-    lockScreen.addEventListener('touchmove', e=>{
-      if(LOCK_PWD) return; // 有密码时不允许滑动解锁
-      const y1 = e.touches[0].clientY;
-      if(y0 !== null && (y0 - y1) > 50) { doUnlock(); y0 = null; }
-    }, {passive:true});
-
-    // 初始：只显示锁屏
-    document.getElementById('phone-screen').style.display = 'none';
-    document.body.style.overflow = 'hidden';
-
-    // ============== （可选）启用密码解锁 ==============
-    // 想要密码：把 LOCK_PWD 设成 "7777" 之类，然后取消注释下面这段即可。
-    /*
-    if (LOCK_PWD) {
-      // 简易密码对话框
-      const dlg = document.createElement('div');
-      dlg.style.cssText = `
-        position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center;
-        background:rgba(0,0,0,.35); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-      `;
-      dlg.innerHTML = `
-        <div style="width:280px;background:rgba(255,255,255,.9);color:#222;border-radius:14px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.25);text-align:center;">
-          <div style="font-weight:700;margin-bottom:10px;">输入锁屏密码</div>
-          <input id="__pwd" type="password" placeholder="••••" style="width:100%;padding:10px 12px;border:1px solid rgba(0,0,0,.1);border-radius:10px;font-size:16px;text-align:center;outline:none;">
-          <div style="display:flex;gap:10px;margin-top:12px;">
-            <button id="__cancel" style="flex:1;padding:10px;border:none;border-radius:10px;background:#e9ecef;">取消</button>
-            <button id="__ok" style="flex:1;padding:10px;border:none;border-radius:10px;background:#4f86ff;color:#fff;font-weight:700;">解锁</button>
-          </div>
-        </div>`;
-      document.body.appendChild(dlg);
-      const input = dlg.querySelector('#__pwd');
-      dlg.querySelector('#__cancel').onclick = ()=>{ input.value=''; };
-      dlg.querySelector('#__ok').onclick = ()=>{
-        if(input.value === LOCK_PWD){ document.body.removeChild(dlg); doUnlock(); }
-        else { input.value=''; input.placeholder='密码错误'; }
-      };
-      // 有密码时，禁用点击/上划直接解锁
-      lockScreen.replaceWith(lockScreen.cloneNode(true));
-    }
-    */
+    App.init();
+    Chat.init();
   </script>
 </body>
 </html>
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>星月小手机 · 首页</title>
+  <link rel="stylesheet" href="./assets/app.css" />
+  <style id="custom-css"></style>
+</head>
+<body>
+  <!-- 顶栏导航 -->
+  <header class="topbar">
+    <div class="brand">星月小手机</div>
+    <nav class="nav">
+      <a href="./index.html">聊天</a>
+      <a href="./pages/settings-api.html">API</a>
+      <a href="./pages/settings-appearance.html">外观</a>
+      <a href="./pages/worldbook.html">世界书</a>
+    </nav>
+  </header>
+
+  <!-- 主屏（聊天占位，可替换为你的聊天UI） -->
+  <main class="container">
+    <section class="hero">
+      <h1>星月交辉 ✨🌙💫</h1>
+      <p>这里是聊天主屏占位。后续接入你的对话面板。</p>
+      <button id="btn-lock" class="btn">🔒 锁屏</button>
+    </section>
+  </main>
+
+  <!-- 锁屏层（默认隐藏，由 app.js 控制） -->
+  <div id="lock-screen" class="lock hidden">
+    <div class="lock-clock">
+      <div id="lock-time" class="time">00:00</div>
+      <div id="lock-date" class="date">—</div>
+    </div>
+    <div id="unlock-hint" class="hint">向上轻扫以解锁</div>
+
+    <!-- 密码弹窗 -->
+    <dialog id="pwd-modal" class="pwd-modal">
+      <form method="dialog" class="pwd-card">
+        <p class="title">输入锁屏密码</p>
+        <input id="pwd-input" type="password" placeholder="••••" autocomplete="off" />
+        <div class="row">
+          <button value="cancel" class="btn ghost">取消</button>
+          <button id="pwd-confirm" value="default" class="btn primary">解锁</button>
+        </div>
+      </form>
+    </dialog>
+  </div>
+
+  <script src="./assets/app.js"></script>
+  <script>
+    // 页面初始化
+    App.init();
+  </script>
+</body>
+</html>
+````
