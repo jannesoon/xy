@@ -1,0 +1,80 @@
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>外观设置 · 星月小手机</title>
+  <link rel="stylesheet" href="../assets/app.css" />
+  <style id="custom-css"></style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">外观设置</div>
+    <nav class="nav">
+      <a href="../index.html">返回</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="display:grid; gap:16px">
+      <h2>锁屏</h2>
+      <label>
+        <input id="lock-enabled" type="checkbox" /> 开启锁屏
+      </label>
+      <label>锁屏密码（可留空）
+        <input id="lock-pwd" type="password" placeholder="••••" />
+      </label>
+      <label>锁屏壁纸（图片会存入本地）
+        <input id="lock-wall" type="file" accept="image/*" />
+      </label>
+      <button id="btn-preview" class="btn">预览锁屏</button>
+    </section>
+
+    <section class="hero" style="margin-top:18px">
+      <h2>全局美化 CSS</h2>
+      <p style="opacity:.8">修改下面的样式可全站生效（保存在浏览器）。</p>
+      <textarea id="css-editor" style="width:100%; min-height:200px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas; border-radius:12px; padding:12px"></textarea>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+        <button id="css-apply" class="btn">应用</button>
+        <button id="css-save" class="btn ghost">保存</button>
+        <button id="btn-export" class="btn ghost">导出数据</button>
+        <label class="btn ghost" style="cursor:pointer">导入数据<input id="file-import" type="file" hidden /></label>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    App.applyCustomCss();
+
+    // 锁屏开关/密码
+    const elEn = document.getElementById('lock-enabled');
+    const elPw = document.getElementById('lock-pwd');
+    elEn.checked = App.get('lockEnabled','false')==='true';
+    elPw.value   = App.get('lockPwd','');
+    elEn.addEventListener('change', ()=> App.set('lockEnabled', String(elEn.checked)));
+    elPw.addEventListener('change',  ()=> App.set('lockPwd', elPw.value));
+
+    // 锁屏壁纸：读为 dataURL 存本地
+    document.getElementById('lock-wall').addEventListener('change', (e)=>{
+      const f = e.target.files?.[0]; if(!f) return;
+      const r = new FileReader(); r.onload = ()=>{ App.set('lockWall', r.result); alert('壁纸已保存'); }; r.readAsDataURL(f);
+    });
+
+    // 预览
+    document.getElementById('btn-preview').onclick = ()=> App.showLock();
+
+    // CSS 编辑器
+    const ed = document.getElementById('css-editor');
+    ed.value = App.get('customCss','/* 在此处编写你的全局样式 */\n');
+    document.getElementById('css-apply').onclick = ()=>{ App.set('customCss', ed.value); App.applyCustomCss(); alert('已应用'); };
+    document.getElementById('css-save').onclick  = ()=>{ App.set('customCss', ed.value); alert('已保存'); };
+
+    // 导出/导入
+    XY.on('btn-export','click', ()=> App.exportAll());
+    XY.on('file-import','change', (e)=>{ const f=e.target.files?.[0]; if(f) App.importAll(f); });
+  </script>
+</body>
+</html>
+```
