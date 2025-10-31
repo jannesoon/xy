@@ -1,0 +1,87 @@
+````css
+:root{ --bg:#0b0c10; --fg:#e8f0fe; --muted:#98a2b3; --card:#111218; --brand:#7aa2ff; --accent:#8b5cf6; }
+*{ box-sizing:border-box }
+body{ margin:0; font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Noto Sans CJK SC, Arial; color:var(--fg); background:linear-gradient(180deg,#05060a,#0e1016 50%,#0a0b10); min-height:100svh }
+
+/* 顶栏 */
+.topbar{ position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(10,12,18,.7); backdrop-filter:saturate(1.2) blur(10px); border-bottom:1px solid rgba(255,255,255,.06) }
+.brand{ font-weight:700; letter-spacing:.5px }
+.nav a{ color:var(--fg); text-decoration:none; margin-left:14px; opacity:.85 }
+.nav a:hover{ opacity:1; color:var(--brand) }
+
+/* 主区域 */
+.container{ max-width:920px; margin:32px auto; padding:0 16px }
+.hero{ background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:28px; box-shadow:0 10px 30px rgba(0,0,0,.25) }
+.btn{ appearance:none; border:0; padding:10px 14px; border-radius:12px; background:var(--brand); color:white; cursor:pointer }
+.btn.ghost{ background:rgba(255,255,255,.08); color:var(--fg) }
+.btn.primary{ background:var(--accent) }
+
+/* 聊天 UI */
+.chat{ display:grid; gap:12px }
+.chat-list{ display:flex; flex-direction:column; gap:10px; background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:14px; min-height:52vh; max-height:62vh; overflow:auto }
+.msg{ display:flex; gap:10px; align-items:flex-end }
+.msg .bubble{ max-width:75%; padding:10px 12px; border-radius:14px; line-height:1.6; border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.06) }
+.msg.user{ justify-content:flex-end }
+.msg.user .bubble{ background:linear-gradient(180deg,rgba(122,162,255,.35),rgba(122,162,255,.2)); border-color:rgba(122,162,255,.35) }
+.msg.bot .avatar{ width:28px; height:28px; border-radius:50%; background:linear-gradient(180deg,#7aa2ff,#8b5cf6) }
+.msg.user .avatar{ display:none }
+
+.chat-input{ display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:end }
+.chat-input textarea{ resize:none; width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.06); color:var(--fg); max-height:160px; overflow:auto }
+.chat-tools{ display:flex; gap:10px }
+
+/* 锁屏层 */
+.lock{ position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:80px 20px 40px; background:rgba(0,0,0,.5) center/cover no-repeat; z-index:9999; transition:opacity .2s ease }
+.lock.hidden{ opacity:0; pointer-events:none }
+.lock-clock{ text-shadow:0 6px 18px rgba(0,0,0,.5); text-align:center }
+.time{ font-weight:200; font-size:72px }
+.date{ font-size:16px; opacity:.9 }
+.hint{ font-weight:600; opacity:.8; animation:breath 2s ease-in-out infinite }
+@keyframes breath{ 0%,100%{ transform:translateY(0); opacity:.7 } 50%{ transform:translateY(-6px); opacity:1 } }
+
+/* 密码弹窗 */
+.pwd-modal{ border:none; padding:0; background:transparent }
+.pwd-card{ width:280px; background:rgba(255,255,255,.85); color:#222; border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 30px rgba(0,0,0,.35) }
+.pwd-card .title{ margin:0; font-weight:700 }
+.pwd-card input{ padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.15); text-align:center; font-size:16px }
+.pwd-card .row{ display:flex; gap:10px; justify-content:space-between }
+
+/* 小屏优化 */
+@media (max-width:480px){ .time{font-size:56px} }
+```css
+:root{ --bg:#0b0c10; --fg:#e8f0fe; --muted:#98a2b3; --card:#111218; --brand:#7aa2ff; --accent:#8b5cf6; }
+*{ box-sizing:border-box }
+body{ margin:0; font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Noto Sans CJK SC, Arial; color:var(--fg); background:linear-gradient(180deg,#05060a,#0e1016 50%,#0a0b10); min-height:100svh }
+
+/* 顶栏 */
+.topbar{ position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(10,12,18,.7); backdrop-filter:saturate(1.2) blur(10px); border-bottom:1px solid rgba(255,255,255,.06) }
+.brand{ font-weight:700; letter-spacing:.5px }
+.nav a{ color:var(--fg); text-decoration:none; margin-left:14px; opacity:.85 }
+.nav a:hover{ opacity:1; color:var(--brand) }
+
+/* 主区域 */
+.container{ max-width:920px; margin:32px auto; padding:0 16px }
+.hero{ background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:28px; box-shadow:0 10px 30px rgba(0,0,0,.25) }
+.btn{ appearance:none; border:0; padding:10px 14px; border-radius:12px; background:var(--brand); color:white; cursor:pointer }
+.btn.ghost{ background:rgba(255,255,255,.08); color:var(--fg) }
+.btn.primary{ background:var(--accent) }
+
+/* 锁屏层 */
+.lock{ position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:80px 20px 40px; background:rgba(0,0,0,.5) center/cover no-repeat; z-index:9999; transition:opacity .2s ease }
+.lock.hidden{ opacity:0; pointer-events:none }
+.lock-clock{ text-shadow:0 6px 18px rgba(0,0,0,.5); text-align:center }
+.time{ font-weight:200; font-size:72px }
+.date{ font-size:16px; opacity:.9 }
+.hint{ font-weight:600; opacity:.8; animation:breath 2s ease-in-out infinite }
+@keyframes breath{ 0%,100%{ transform:translateY(0); opacity:.7 } 50%{ transform:translateY(-6px); opacity:1 } }
+
+/* 密码弹窗 */
+.pwd-modal{ border:none; padding:0; background:transparent }
+.pwd-card{ width:280px; background:rgba(255,255,255,.85); color:#222; border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:0 10px 30px rgba(0,0,0,.35) }
+.pwd-card .title{ margin:0; font-weight:700 }
+.pwd-card input{ padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.15); text-align:center; font-size:16px }
+.pwd-card .row{ display:flex; gap:10px; justify-content:space-between }
+
+/* 小屏优化 */
+@media (max-width:480px){ .time{font-size:56px} }
+````
