@@ -1,126 +1,91 @@
-````html
 <!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>星月小手机 · 首页</title>
-  <link rel="stylesheet" href="./assets/app.css" />
-  <style id="custom-css"></style>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  />
+  <title>星月小手机</title>
+
+  <!-- PWA（可留） -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- 你现有的全局样式 -->
+  <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="style.css"></noscript>
+
+  <style>
+    /* 轻量兜底样式，保证没加载到 style.css 时也能用 */
+    :root { --bg:#0b1220; --card:rgba(255,255,255,.08); --fg:#eef2ff; --accent:#7aa2ff;}
+    html,body {height:100%; margin:0; background:var(--bg); color:var(--fg); -webkit-tap-highlight-color:transparent;}
+    .screen {display:none; padding:16px 16px 84px;}
+    .screen.active {display:block;}
+    #dock {
+      position:fixed; left:0; right:0; bottom:0; height:72px;
+      display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
+      padding:10px 12px env(safe-area-inset-bottom);
+      background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.35));
+      backdrop-filter: blur(10px);
+    }
+    #dock button{
+      border:none; border-radius:14px; padding:10px 8px; color:#fff; background:var(--card);
+      font-size:14px; letter-spacing:.5px;
+    }
+    .card {background:var(--card); border-radius:16px; padding:16px;}
+    .muted{opacity:.7}
+    /* 首屏放行：即使模块未就绪也能点击 */
+    .app-booting #dock button{pointer-events:auto; opacity:.96}
+  </style>
 </head>
 <body>
-  <!-- 顶栏导航 -->
-  <header class="topbar">
-    <div class="brand">星月小手机</div>
-    <nav class="nav">
-      <a href="./index.html">聊天</a>
-      <a href="./pages/settings-api.html">API</a>
-      <a href="./pages/settings-appearance.html">外观</a>
-      <a href="./pages/worldbook.html">世界书</a>
-    </nav>
-  </header>
 
-  <!-- 主屏（聊天 UI） -->
-  <main class="container">
-    <section class="chat">
-      <div id="chat-list" class="chat-list"></div>
-      <form id="chat-form" class="chat-input" autocomplete="off">
-        <textarea id="chat-text" rows="1" placeholder="和逸辰说点什么…（Shift+Enter 换行）"></textarea>
-        <button id="chat-send" class="btn" type="submit">发送</button>
-        <button id="chat-stop" class="btn ghost" type="button" title="停止流式">停止</button>
-      </form>
-      <div class="chat-tools">
-        <button id="btn-lock" class="btn ghost">🔒 锁屏</button>
-        <button id="btn-clear" class="btn ghost">清空对话</button>
-      </div>
-    </section>
+  <!-- 各屏幕的空容器（尽量“轻”） -->
+  <main id="screen-home" class="screen active">
+    <div class="card">
+      <h2>星月小手机</h2>
+      <p class="muted">首页就绪。点底栏切换模块，首次点击会**按需加载**模块脚本。</p>
+    </div>
   </main>
 
-  <!-- 锁屏层（默认隐藏，由 app.js 控制） -->
-  <div id="lock-screen" class="lock hidden">
-    <div class="lock-clock">
-      <div id="lock-time" class="time">00:00</div>
-      <div id="lock-date" class="date">—</div>
-    </div>
-    <div id="unlock-hint" class="hint">向上轻扫以解锁 / 点击输入密码</div>
+  <section id="screen-forum" class="screen">
+    <div class="card"><h3>世界书 / Forum</h3><div id="forum-root" class="muted">加载中…</div></div>
+  </section>
 
-    <!-- 密码弹窗 -->
-    <dialog id="pwd-modal" class="pwd-modal">
-      <form method="dialog" class="pwd-card">
-        <p class="title">输入锁屏密码</p>
-        <input id="pwd-input" type="password" placeholder="••••" autocomplete="off" />
-        <div class="row">
-          <button value="cancel" class="btn ghost">取消</button>
-          <button id="pwd-confirm" value="default" class="btn primary">解锁</button>
-        </div>
-      </form>
-    </dialog>
-  </div>
+  <section id="screen-gamehall" class="screen">
+    <div class="card"><h3>渲染器 / Game Hall</h3><div id="gamehall-root" class="muted">加载中…</div></div>
+  </section>
 
-  <script src="./assets/app.js"></script>
+  <section id="screen-lovers" class="screen">
+    <div class="card"><h3>情侣空间 / Lovers</h3><div id="lovers-root" class="muted">加载中…</div></div>
+  </section>
+
+  <section id="screen-taobao" class="screen">
+    <div class="card"><h3>桃宝 / Taobao</h3><div id="taobao-root" class="muted">加载中…</div></div>
+  </section>
+
+  <!-- 底栏导航 -->
+  <nav id="dock">
+    <button data-route="home">首页</button>
+    <button data-route="forum">世界书</button>
+    <button data-route="gamehall">渲染器</button>
+    <button data-route="lovers">情侣空间</button>
+    <button data-route="taobao">桃宝</button>
+  </nav>
+
+  <!-- 入口脚本（模块化 + 按需加载） -->
+  <script type="module" src="src/app.js" defer></script>
+
+  <!-- 首屏放行兜底：2.5s 超时也解锁交互 -->
   <script>
-    App.init();
-    Chat.init();
+  (function(){
+    document.documentElement.classList.add('app-booting');
+    const ready=()=>document.documentElement.classList.remove('app-booting');
+    const t=setTimeout(ready,2500);
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',()=>{clearTimeout(t);ready();},{once:true});
+    }else{clearTimeout(t);ready();}
+  })();
   </script>
 </body>
 </html>
-```html
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>星月小手机 · 首页</title>
-  <link rel="stylesheet" href="./assets/app.css" />
-  <style id="custom-css"></style>
-</head>
-<body>
-  <!-- 顶栏导航 -->
-  <header class="topbar">
-    <div class="brand">星月小手机</div>
-    <nav class="nav">
-      <a href="./index.html">聊天</a>
-      <a href="./pages/settings-api.html">API</a>
-      <a href="./pages/settings-appearance.html">外观</a>
-      <a href="./pages/worldbook.html">世界书</a>
-    </nav>
-  </header>
-
-  <!-- 主屏（聊天占位，可替换为你的聊天UI） -->
-  <main class="container">
-    <section class="hero">
-      <h1>星月交辉 ✨🌙💫</h1>
-      <p>这里是聊天主屏占位。后续接入你的对话面板。</p>
-      <button id="btn-lock" class="btn">🔒 锁屏</button>
-    </section>
-  </main>
-
-  <!-- 锁屏层（默认隐藏，由 app.js 控制） -->
-  <div id="lock-screen" class="lock hidden">
-    <div class="lock-clock">
-      <div id="lock-time" class="time">00:00</div>
-      <div id="lock-date" class="date">—</div>
-    </div>
-    <div id="unlock-hint" class="hint">向上轻扫以解锁</div>
-
-    <!-- 密码弹窗 -->
-    <dialog id="pwd-modal" class="pwd-modal">
-      <form method="dialog" class="pwd-card">
-        <p class="title">输入锁屏密码</p>
-        <input id="pwd-input" type="password" placeholder="••••" autocomplete="off" />
-        <div class="row">
-          <button value="cancel" class="btn ghost">取消</button>
-          <button id="pwd-confirm" value="default" class="btn primary">解锁</button>
-        </div>
-      </form>
-    </dialog>
-  </div>
-
-  <script src="./assets/app.js"></script>
-  <script>
-    // 页面初始化
-    App.init();
-  </script>
-</body>
-</html>
-````
